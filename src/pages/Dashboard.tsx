@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut, Wallet, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { Plus, Wallet, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
 import { toast } from "sonner";
 import StatCard from "@/components/StatCard";
 import TransactionForm from "@/components/TransactionForm";
@@ -11,6 +11,10 @@ import SpendingChart from "@/components/SpendingChart";
 import TrendChart from "@/components/TrendChart";
 import BudgetAlert from "@/components/BudgetAlert";
 import { format, startOfMonth, endOfMonth, subMonths } from "date-fns";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
+import UserAvatar from "@/components/UserAvatar";
+import { motion } from "framer-motion";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -69,10 +73,6 @@ const Dashboard = () => {
     }
   };
 
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
-  };
 
   const handleDelete = async (id: string) => {
     const { error } = await supabase
@@ -185,102 +185,118 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card shadow-[var(--shadow-card)]">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Wallet className="h-6 w-6 text-primary" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold">Smart Expense Manager</h1>
-                <p className="text-sm text-muted-foreground">Welcome back, {profile?.full_name}!</p>
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-background to-primary/5">
+        <AppSidebar />
+        
+        <div className="flex-1 flex flex-col w-full">
+          {/* Header */}
+          <header className="sticky top-0 z-10 border-b bg-card/80 backdrop-blur-md shadow-[var(--shadow-card)]">
+            <div className="container mx-auto px-4 py-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger />
+                  <div className="bg-primary/10 p-2 rounded-lg">
+                    <Wallet className="h-6 w-6 text-primary" />
+                  </div>
+                  <div>
+                    <h1 className="text-xl font-bold">Smart Expense Manager</h1>
+                    <p className="text-sm text-muted-foreground">Welcome back, {profile?.full_name}!</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <UserAvatar fullName={profile?.full_name || "User"} email={user?.email} />
+                </div>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button onClick={() => setIsFormOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Transaction
-              </Button>
-              <Button variant="outline" onClick={handleSignOut}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </Button>
+          </header>
+
+          <main className="flex-1 container mx-auto px-4 py-8 space-y-6">
+            {/* Budget Alert */}
+            {profile && (
+              <BudgetAlert
+                budget={parseFloat(profile.monthly_budget)}
+                spent={totalExpense}
+                forecast={forecastExpense}
+              />
+            )}
+
+            {/* Stats Cards */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <StatCard
+                title="Total Balance"
+                value={`₹${balance.toFixed(2)}`}
+                icon={DollarSign}
+                variant="balance"
+              />
+              <StatCard
+                title="Total Income"
+                value={`₹${totalIncome.toFixed(2)}`}
+                icon={TrendingUp}
+                variant="income"
+              />
+              <StatCard
+                title="Total Expense"
+                value={`₹${totalExpense.toFixed(2)}`}
+                icon={TrendingDown}
+                variant="expense"
+              />
+              <StatCard
+                title="Forecast"
+                value={`₹${forecastExpense.toFixed(2)}`}
+                icon={TrendingUp}
+                trend={{
+                  value: forecastExpense > totalExpense 
+                    ? `+${((forecastExpense - totalExpense) / totalExpense * 100).toFixed(1)}%`
+                    : `-${((totalExpense - forecastExpense) / totalExpense * 100).toFixed(1)}%`,
+                  isPositive: forecastExpense <= totalExpense,
+                }}
+              />
             </div>
-          </div>
-        </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8 space-y-6">
-        {/* Budget Alert */}
-        {profile && (
-          <BudgetAlert
-            budget={parseFloat(profile.monthly_budget)}
-            spent={totalExpense}
-            forecast={forecastExpense}
-          />
-        )}
+            {/* Charts */}
+            <div className="grid gap-6 lg:grid-cols-2">
+              <SpendingChart data={categoryData} />
+              <TrendChart data={trendData} />
+            </div>
 
-        {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <StatCard
-            title="Total Balance"
-            value={`₹${balance.toFixed(2)}`}
-            icon={DollarSign}
-            variant="balance"
-          />
-          <StatCard
-            title="Total Income"
-            value={`₹${totalIncome.toFixed(2)}`}
-            icon={TrendingUp}
-            variant="income"
-          />
-          <StatCard
-            title="Total Expense"
-            value={`₹${totalExpense.toFixed(2)}`}
-            icon={TrendingDown}
-            variant="expense"
-          />
-          <StatCard
-            title="Forecast"
-            value={`₹${forecastExpense.toFixed(2)}`}
-            icon={TrendingUp}
-            trend={{
-              value: forecastExpense > totalExpense 
-                ? `+${((forecastExpense - totalExpense) / totalExpense * 100).toFixed(1)}%`
-                : `-${((totalExpense - forecastExpense) / totalExpense * 100).toFixed(1)}%`,
-              isPositive: forecastExpense <= totalExpense,
+            {/* Transactions List */}
+            <TransactionList
+              transactions={transactions.slice(0, 10)}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          </main>
+
+          {/* Floating Action Button */}
+          <motion.div
+            className="fixed bottom-6 right-6 z-50"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+          >
+            <Button
+              size="lg"
+              className="h-14 w-14 rounded-full shadow-lg hover:shadow-xl"
+              onClick={() => setIsFormOpen(true)}
+            >
+              <Plus className="h-6 w-6" />
+            </Button>
+          </motion.div>
+
+          {/* Transaction Form Dialog */}
+          <TransactionForm
+            open={isFormOpen}
+            onOpenChange={(open) => {
+              setIsFormOpen(open);
+              if (!open) setEditTransaction(null);
             }}
+            onSuccess={handleFormSuccess}
+            editTransaction={editTransaction}
           />
         </div>
-
-        {/* Charts */}
-        <div className="grid gap-6 lg:grid-cols-2">
-          <SpendingChart data={categoryData} />
-          <TrendChart data={trendData} />
-        </div>
-
-        {/* Transactions List */}
-        <TransactionList
-          transactions={transactions.slice(0, 10)}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
-      </main>
-
-      {/* Transaction Form Dialog */}
-      <TransactionForm
-        open={isFormOpen}
-        onOpenChange={(open) => {
-          setIsFormOpen(open);
-          if (!open) setEditTransaction(null);
-        }}
-        onSuccess={handleFormSuccess}
-        editTransaction={editTransaction}
-      />
-    </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
