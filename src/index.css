@@ -8,77 +8,6 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 220 25% 10%;
-    --foreground: 210 40% 98%;
-
-    --card: 220 23% 14%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 220 23% 14%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 100% 60%;
-    --primary-foreground: 0 0% 100%;
-    --primary-glow: 210 100% 70%;
-
-    --secondary: 280 70% 60%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 220 20% 20%;
-    --muted-foreground: 215 20% 65%;
-
-    --accent: 170 70% 50%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --warning: 38 92% 50%;
-    --warning-foreground: 0 0% 100%;
-
-    --success: 142 70% 50%;
-    --success-foreground: 0 0% 100%;
-
-    --border: 220 20% 25%;
-    --input: 220 20% 25%;
-    --ring: 210 100% 60%;
-
-    --radius: 1rem;
-
-    --sidebar-background: 220 25% 12%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 210 100% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 20%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 220 20% 25%;
-    --sidebar-ring: 210 100% 60%;
-
-    /* Chart colors - vibrant futuristic palette */
-    --chart-1: 210 100% 60%;
-    --chart-2: 170 70% 50%;
-    --chart-3: 280 70% 60%;
-    --chart-4: 38 92% 50%;
-    --chart-5: 0 84% 60%;
-
-    /* Futuristic Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(210 100% 60%), hsl(280 70% 60%));
-    --gradient-success: linear-gradient(135deg, hsl(142 70% 50%), hsl(170 70% 50%));
-    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(330 70% 60%));
-    --gradient-glow: linear-gradient(135deg, hsl(210 100% 70% / 0.2), hsl(280 70% 70% / 0.2));
-    
-    /* Advanced Shadows with glow effects */
-    --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
-    --shadow-elevated: 0 20px 25px -5px hsl(0 0% 0% / 0.3), 0 8px 10px -6px hsl(0 0% 0% / 0.3);
-    --shadow-glow: 0 0 40px hsl(210 100% 70% / 0.3), 0 0 20px hsl(210 100% 60% / 0.2);
-    --shadow-glow-accent: 0 0 40px hsl(170 70% 60% / 0.3), 0 0 20px hsl(170 70% 50% / 0.2);
-    
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  }
-
-  .dark {
     --background: 210 40% 98%;
     --foreground: 215 25% 15%;
 
@@ -114,6 +43,8 @@ All colors MUST be HSL.
     --input: 214 32% 91%;
     --ring: 210 80% 50%;
 
+    --radius: 1rem;
+
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 215 25% 15%;
     --sidebar-primary: 210 80% 50%;
@@ -123,21 +54,90 @@ All colors MUST be HSL.
     --sidebar-border: 214 32% 91%;
     --sidebar-ring: 210 80% 50%;
 
+    /* Chart colors - vibrant futuristic palette */
     --chart-1: 210 80% 50%;
     --chart-2: 170 60% 45%;
     --chart-3: 280 60% 55%;
     --chart-4: 38 92% 50%;
     --chart-5: 0 75% 55%;
 
+    /* Futuristic Gradients */
     --gradient-primary: linear-gradient(135deg, hsl(210 80% 50%), hsl(280 60% 55%));
     --gradient-success: linear-gradient(135deg, hsl(142 65% 45%), hsl(170 60% 45%));
     --gradient-danger: linear-gradient(135deg, hsl(0 75% 55%), hsl(330 60% 55%));
     --gradient-glow: linear-gradient(135deg, hsl(210 80% 60% / 0.15), hsl(280 60% 60% / 0.15));
-
+    
+    /* Advanced Shadows with glow effects */
     --shadow-card: 0 1px 3px 0 hsl(215 25% 15% / 0.1), 0 1px 2px -1px hsl(215 25% 15% / 0.1);
     --shadow-elevated: 0 10px 15px -3px hsl(215 25% 15% / 0.1), 0 4px 6px -4px hsl(215 25% 15% / 0.1);
     --shadow-glow: 0 0 30px hsl(210 80% 60% / 0.2), 0 0 15px hsl(210 80% 50% / 0.15);
     --shadow-glow-accent: 0 0 30px hsl(170 60% 55% / 0.2), 0 0 15px hsl(170 60% 45% / 0.15);
+    
+    /* Transitions */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 220 23% 14%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 220 23% 14%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 210 100% 70%;
+
+    --secondary: 280 70% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 20% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 170 70% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --success: 142 70% 50%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 20% 25%;
+    --input: 220 20% 25%;
+    --ring: 210 100% 60%;
+
+    --sidebar-background: 220 25% 12%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 210 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 20% 20%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-border: 220 20% 25%;
+    --sidebar-ring: 210 100% 60%;
+
+    --chart-1: 210 100% 60%;
+    --chart-2: 170 70% 50%;
+    --chart-3: 280 70% 60%;
+    --chart-4: 38 92% 50%;
+    --chart-5: 0 84% 60%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(210 100% 60%), hsl(280 70% 60%));
+    --gradient-success: linear-gradient(135deg, hsl(142 70% 50%), hsl(170 70% 50%));
+    --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(330 70% 60%));
+    --gradient-glow: linear-gradient(135deg, hsl(210 100% 70% / 0.2), hsl(280 70% 70% / 0.2));
+
+    --shadow-card: 0 4px 6px -1px hsl(0 0% 0% / 0.3), 0 2px 4px -2px hsl(0 0% 0% / 0.3);
+    --shadow-elevated: 0 20px 25px -5px hsl(0 0% 0% / 0.3), 0 8px 10px -6px hsl(0 0% 0% / 0.3);
+    --shadow-glow: 0 0 40px hsl(210 100% 70% / 0.3), 0 0 20px hsl(210 100% 60% / 0.2);
+    --shadow-glow-accent: 0 0 40px hsl(170 70% 60% / 0.3), 0 0 20px hsl(170 70% 50% / 0.2);
   }
 }
 

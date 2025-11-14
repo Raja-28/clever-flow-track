@@ -52,18 +52,20 @@ const StatCard = ({ title, value, icon: Icon, trend, trendValue, color = "blue" 
                 separator=","
               />
             </h3>
-            {trend && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className={`text-sm flex items-center gap-1 ${
-                  trend === "up" ? "text-success" : "text-destructive"
-                }`}
-              >
-                {trendValue}
-              </motion.p>
-            )}
+            <div className="h-5 flex items-center">
+              {trend && (
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className={`text-sm flex items-center gap-1 ${
+                    trend === "up" ? "text-success" : "text-destructive"
+                  }`}
+                >
+                  {trendValue}
+                </motion.p>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>

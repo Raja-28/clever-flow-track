@@ -19,35 +19,43 @@ const AIInsights = ({ transactions, totalIncome, totalExpense }: AIInsightsProps
   const generateInsights = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('ai-insights', {
-        body: { 
-          transactions: transactions.map(t => ({
-            type: t.type,
-            category: t.category_name,
-            amount: t.amount,
-            date: t.transaction_date
-          })),
-          totalIncome,
-          totalExpense
-        }
-      });
-
-      if (error) throw error;
-
-      if (data?.insights) {
-        setInsights(data.insights);
+      // Generate basic insights based on transaction data
+      const savingsRate = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0;
+      const categorySpending = transactions
+        .filter(t => t.type === "expense")
+        .reduce((acc: any, t) => {
+          acc[t.category_name] = (acc[t.category_name] || 0) + parseFloat(t.amount);
+          return acc;
+        }, {});
+      
+      const topCategory = Object.entries(categorySpending)
+        .sort(([,a], [,b]) => (b as number) - (a as number))[0];
+      
+      let insightText = `📊 **Financial Overview**\n\n`;
+      
+      if (savingsRate > 20) {
+        insightText += `🎉 Great job! You're saving ${savingsRate.toFixed(1)}% of your income. Keep up the excellent financial discipline!\n\n`;
+      } else if (savingsRate > 0) {
+        insightText += `💡 You're saving ${savingsRate.toFixed(1)}% of your income. Consider increasing this to 20% or more for better financial health.\n\n`;
       } else {
-        throw new Error("No insights received");
+        insightText += `⚠️ Your expenses exceed your income. Focus on reducing spending or increasing income sources.\n\n`;
       }
+      
+      if (topCategory) {
+        insightText += `📈 Your highest spending category is **${topCategory[0]}** at ₹${(topCategory[1] as number).toFixed(2)}.\n\n`;
+      }
+      
+      insightText += `💰 **Quick Tips:**\n`;
+      insightText += `• Track daily expenses to identify spending patterns\n`;
+      insightText += `• Set monthly budgets for each category\n`;
+      insightText += `• Review and optimize recurring subscriptions\n`;
+      insightText += `• Build an emergency fund covering 3-6 months of expenses`;
+      
+      setInsights(insightText);
+      toast.success("Insights generated successfully!");
     } catch (error: any) {
       console.error("Error generating insights:", error);
-      if (error.message?.includes("429")) {
-        toast.error("Rate limit reached. Please try again in a moment.");
-      } else if (error.message?.includes("402")) {
-        toast.error("AI credits exhausted. Please add credits to continue.");
-      } else {
-        toast.error("Failed to generate insights. Please try again.");
-      }
+      toast.error("Failed to generate insights. Please try again.");
     } finally {
       setIsLoading(false);
     }

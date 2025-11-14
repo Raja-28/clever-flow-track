@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut, Wallet, TrendingUp, TrendingDown, DollarSign } from "lucide-react";
+import { Plus, LogOut, Wallet, TrendingUp, TrendingDown, DollarSign, Calendar, Target, PieChart, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import StatCard from "@/components/StatCard";
@@ -14,6 +14,12 @@ import BudgetAlert from "@/components/BudgetAlert";
 import AIInsights from "@/components/AIInsights";
 import SmartGoals from "@/components/SmartGoals";
 import Gamification from "@/components/Gamification";
+import { ThemeToggle } from "@/components/ThemeToggle";
+import BudgetPlanner from "@/components/BudgetPlanner";
+import ReportsModal from "@/components/ReportsModal";
+import FinancialHealthScore from "@/components/FinancialHealthScore";
+import QuickStats from "@/components/QuickStats";
+import ExpenseTracker from "@/components/ExpenseTracker";
 import { format } from "date-fns";
 
 const Dashboard = () => {
@@ -24,6 +30,8 @@ const Dashboard = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editTransaction, setEditTransaction] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isBudgetPlannerOpen, setIsBudgetPlannerOpen] = useState(false);
+  const [isReportsOpen, setIsReportsOpen] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -112,6 +120,29 @@ const Dashboard = () => {
 
   const balance = totalIncome - totalExpense;
 
+  // Create consistent color mapping for categories
+  const getCategoryColor = (categoryName: string) => {
+    const colors = [
+      'hsl(210, 80%, 50%)', // Blue
+      'hsl(170, 60%, 45%)', // Teal
+      'hsl(280, 60%, 55%)', // Purple
+      'hsl(38, 92%, 50%)',  // Orange
+      'hsl(0, 75%, 55%)',   // Red
+      'hsl(142, 65%, 45%)', // Green
+      'hsl(45, 93%, 47%)',  // Yellow
+      'hsl(330, 60%, 55%)', // Pink
+      'hsl(200, 70%, 45%)', // Light Blue
+      'hsl(15, 85%, 55%)',  // Red Orange
+    ];
+    
+    // Create a simple hash from category name to ensure consistency
+    let hash = 0;
+    for (let i = 0; i < categoryName.length; i++) {
+      hash = categoryName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return colors[Math.abs(hash) % colors.length];
+  };
+
   // Spending chart data
   const spendingByCategory = transactions
     .filter(t => t.type === "expense")
@@ -123,18 +154,47 @@ const Dashboard = () => {
         acc.push({
           name: t.category_name,
           value: parseFloat(t.amount),
-          color: `hsl(${Math.random() * 360}, 70%, 50%)`
+          color: getCategoryColor(t.category_name)
         });
       }
       return acc;
     }, []);
 
-  // Trend data
-  const trendData = Array.from({ length: 6 }, (_, i) => ({
-    month: format(new Date().setMonth(new Date().getMonth() - (5 - i)), "MMM"),
-    income: Math.random() * 20000 + 10000,
-    expense: Math.random() * 15000 + 8000,
-  }));
+  // Trend data - Generate from actual transactions
+  const generateTrendData = () => {
+    const monthlyData: { [key: string]: { income: number; expense: number } } = {};
+    
+    // Initialize last 6 months
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date();
+      date.setMonth(date.getMonth() - i);
+      const monthKey = format(date, "MMM yyyy");
+      monthlyData[monthKey] = { income: 0, expense: 0 };
+    }
+    
+    // Aggregate transactions by month
+    transactions.forEach(transaction => {
+      const transactionDate = new Date(transaction.transaction_date);
+      const monthKey = format(transactionDate, "MMM yyyy");
+      
+      if (monthlyData[monthKey]) {
+        if (transaction.type === "income") {
+          monthlyData[monthKey].income += parseFloat(transaction.amount);
+        } else {
+          monthlyData[monthKey].expense += parseFloat(transaction.amount);
+        }
+      }
+    });
+    
+    // Convert to array format
+    return Object.entries(monthlyData).map(([month, data]) => ({
+      month: month.split(' ')[0], // Just the month name
+      income: data.income,
+      expense: data.expense,
+    }));
+  };
+  
+  const trendData = generateTrendData();
 
   if (isLoading) {
     return (
@@ -164,22 +224,30 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <motion.div
-                whileHover={{ scale: 1.1, rotate: 360 }}
-                transition={{ duration: 0.5 }}
-                className="bg-gradient-to-br from-primary to-secondary p-3 rounded-2xl glow-primary"
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                className="relative bg-primary/10 backdrop-blur-sm p-3 rounded-2xl border border-primary/20 hover:border-primary/40 transition-all"
               >
-                <Wallet className="h-7 w-7 text-primary-foreground" />
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary/5 rounded-2xl" />
+                <Wallet className="h-7 w-7 text-primary relative z-10" />
               </motion.div>
               <div>
                 <h1 className="text-2xl font-bold gradient-bg bg-clip-text text-transparent">
                   Smart Expense Manager
                 </h1>
-                <p className="text-sm text-muted-foreground">
-                  Welcome back, {profile?.full_name}!
-                </p>
+                <div className="flex items-center gap-4">
+                  <p className="text-sm text-muted-foreground">
+                    Welcome back, {profile?.full_name}!
+                  </p>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                    <Calendar className="h-3 w-3" />
+                    {format(new Date(), "MMM dd, yyyy")}
+                  </div>
+                </div>
               </div>
             </div>
             <div className="flex gap-2">
+              <ThemeToggle />
               <Button 
                 onClick={() => setIsFormOpen(true)}
                 className="gradient-bg glow-primary"
@@ -203,6 +271,8 @@ const Dashboard = () => {
             title="Total Balance"
             value={`₹${balance.toFixed(2)}`}
             icon={DollarSign}
+            trend={balance >= 0 ? "up" : "down"}
+            trendValue={balance >= 0 ? "Positive" : "Negative"}
             color="blue"
           />
           <StatCard
@@ -223,6 +293,50 @@ const Dashboard = () => {
           />
         </div>
 
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4"
+        >
+          <Button
+            variant="outline"
+            className="h-20 flex-col gap-2 hover:bg-primary/5 hover:border-primary/30 transition-all"
+            onClick={() => setIsFormOpen(true)}
+          >
+            <Plus className="h-5 w-5 text-primary" />
+            <span className="text-sm font-medium">Add Expense</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-20 flex-col gap-2 hover:bg-success/5 hover:border-success/30 transition-all"
+            onClick={() => {
+              setEditTransaction({ type: 'income', category_id: '', amount: '', description: '', transaction_date: new Date().toISOString().split('T')[0] });
+              setIsFormOpen(true);
+            }}
+          >
+            <TrendingUp className="h-5 w-5 text-success" />
+            <span className="text-sm font-medium">Add Income</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-20 flex-col gap-2 hover:bg-accent/5 hover:border-accent/30 transition-all"
+            onClick={() => setIsBudgetPlannerOpen(true)}
+          >
+            <Target className="h-5 w-5 text-accent" />
+            <span className="text-sm font-medium">Set Budget</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="h-20 flex-col gap-2 hover:bg-secondary/5 hover:border-secondary/30 transition-all"
+            onClick={() => setIsReportsOpen(true)}
+          >
+            <BarChart3 className="h-5 w-5 text-secondary" />
+            <span className="text-sm font-medium">View Reports</span>
+          </Button>
+        </motion.div>
+
         {/* Budget Alert */}
         {profile && (
           <BudgetAlert
@@ -231,17 +345,39 @@ const Dashboard = () => {
           />
         )}
 
-        {/* AI Insights & Gamification */}
+        {/* AI Insights */}
+        <AIInsights
+          transactions={transactions}
+          totalIncome={totalIncome}
+          totalExpense={totalExpense}
+        />
+
+        {/* Enhanced Features - Vertically Aligned */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <AIInsights
+          <FinancialHealthScore
             transactions={transactions}
             totalIncome={totalIncome}
             totalExpense={totalExpense}
           />
+          <QuickStats
+            transactions={transactions}
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+          />
+        </div>
+
+        {/* Gamification & Quick Tools */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Gamification
             transactions={transactions}
             totalIncome={totalIncome}
             totalExpense={totalExpense}
+          />
+          <ExpenseTracker
+            onAddExpense={(expense) => {
+              // This could trigger a refresh of transactions or show a toast
+              console.log("Quick expense added:", expense);
+            }}
           />
         </div>
 
@@ -277,6 +413,23 @@ const Dashboard = () => {
         }}
         onSuccess={handleFormSuccess}
         editTransaction={editTransaction}
+      />
+
+      {/* Budget Planner */}
+      {user && (
+        <BudgetPlanner
+          userId={user.id}
+          transactions={transactions}
+          isOpen={isBudgetPlannerOpen}
+          onOpenChange={setIsBudgetPlannerOpen}
+        />
+      )}
+
+      {/* Reports Modal */}
+      <ReportsModal
+        transactions={transactions}
+        isOpen={isReportsOpen}
+        onOpenChange={setIsReportsOpen}
       />
     </div>
   );

@@ -182,7 +182,7 @@ const TrendChart = ({ data }: TrendChartProps) => {
         </div>
 
         {/* Enhanced Chart */}
-        <ResponsiveContainer width="100%" height={320}>
+        <ResponsiveContainer width="100%" height={400}>
           <ComposedChart 
             data={enhancedData}
             margin={{ top: 10, right: 10, left: 0, bottom: 0 }}

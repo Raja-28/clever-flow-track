@@ -36,14 +36,10 @@ const SmartGoals = ({ userId }: SmartGoalsProps) => {
   }, [userId]);
 
   const fetchGoals = async () => {
-    const { data, error } = await supabase
-      .from("goals")
-      .select("*")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setGoals(data);
+    // For now, use localStorage until goals table is created
+    const storedGoals = localStorage.getItem(`goals_${userId}`);
+    if (storedGoals) {
+      setGoals(JSON.parse(storedGoals));
     }
   };
 
@@ -53,36 +49,47 @@ const SmartGoals = ({ userId }: SmartGoalsProps) => {
       return;
     }
 
-    const { error } = await supabase.from("goals").insert([
-      {
+    try {
+      const newGoal: Goal = {
+        id: Date.now().toString(),
         user_id: userId,
         title,
         target_amount: parseFloat(targetAmount),
         current_amount: 0,
         deadline,
-      },
-    ]);
+        created_at: new Date().toISOString(),
+      };
 
-    if (error) {
-      toast.error("Failed to add goal");
-    } else {
+      const storedGoals = localStorage.getItem(`goals_${userId}`);
+      const existingGoals = storedGoals ? JSON.parse(storedGoals) : [];
+      const updatedGoals = [newGoal, ...existingGoals];
+      
+      localStorage.setItem(`goals_${userId}`, JSON.stringify(updatedGoals));
+      
       toast.success("Goal added successfully!");
       fetchGoals();
       setIsOpen(false);
       setTitle("");
       setTargetAmount("");
       setDeadline("");
+    } catch (error) {
+      toast.error("Failed to add goal");
     }
   };
 
   const handleDeleteGoal = async (goalId: string) => {
-    const { error } = await supabase.from("goals").delete().eq("id", goalId);
-
-    if (error) {
+    try {
+      const storedGoals = localStorage.getItem(`goals_${userId}`);
+      if (storedGoals) {
+        const existingGoals = JSON.parse(storedGoals);
+        const updatedGoals = existingGoals.filter((goal: Goal) => goal.id !== goalId);
+        localStorage.setItem(`goals_${userId}`, JSON.stringify(updatedGoals));
+        
+        toast.success("Goal deleted");
+        fetchGoals();
+      }
+    } catch (error) {
       toast.error("Failed to delete goal");
-    } else {
-      toast.success("Goal deleted");
-      fetchGoals();
     }
   };
 
