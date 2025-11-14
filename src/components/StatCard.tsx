@@ -1,5 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { LucideIcon } from "lucide-react";
+import CountUp from "react-countup";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
