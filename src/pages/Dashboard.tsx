@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Plus, LogOut, Wallet, TrendingUp, TrendingDown, DollarSign, Calendar, Target, PieChart, BarChart3 } from "lucide-react";
+import { Plus, LogOut, Wallet, TrendingUp, TrendingDown, IndianRupee, Calendar, Target, PieChart, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import StatCard from "@/components/StatCard";
@@ -270,7 +270,7 @@ const Dashboard = () => {
           <StatCard
             title="Total Balance"
             value={`₹${balance.toFixed(2)}`}
-            icon={DollarSign}
+            icon={IndianRupee}
             trend={balance >= 0 ? "up" : "down"}
             trendValue={balance >= 0 ? "Positive" : "Negative"}
             color="blue"
