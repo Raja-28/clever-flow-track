@@ -36,20 +36,22 @@ const ReportsModal = ({ transactions, isOpen, onOpenChange }: ReportsModalProps)
         startDate = startOfMonth(now);
         endDate = endOfMonth(now);
         break;
-      case "last-month":
+      case "last-month": {
         const lastMonth = subMonths(now, 1);
         startDate = startOfMonth(lastMonth);
         endDate = endOfMonth(lastMonth);
         break;
+      }
       case "current-year":
         startDate = startOfYear(now);
         endDate = endOfYear(now);
         break;
-      case "last-year":
+      case "last-year": {
         const lastYear = subYears(now, 1);
         startDate = startOfYear(lastYear);
         endDate = endOfYear(lastYear);
         break;
+      }
       default:
         startDate = startOfMonth(now);
         endDate = endOfMonth(now);
@@ -62,7 +64,7 @@ const ReportsModal = ({ transactions, isOpen, onOpenChange }: ReportsModalProps)
   };
 
   const filteredTransactions = getFilteredTransactions();
-  
+
   const totalIncome = filteredTransactions
     .filter(t => t.type === "income")
     .reduce((sum, t) => sum + t.amount, 0);
@@ -82,7 +84,7 @@ const ReportsModal = ({ transactions, isOpen, onOpenChange }: ReportsModalProps)
     }, {});
 
   const topCategories = Object.entries(categoryBreakdown)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 5);
 
   const getPeriodLabel = () => {
@@ -345,9 +347,8 @@ const ReportsModal = ({ transactions, isOpen, onOpenChange }: ReportsModalProps)
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3">
-                          <div className={`w-3 h-3 rounded-full ${
-                            transaction.type === "income" ? "bg-success" : "bg-destructive"
-                          }`} />
+                          <div className={`w-3 h-3 rounded-full ${transaction.type === "income" ? "bg-success" : "bg-destructive"
+                            }`} />
                           <span className="font-medium">{transaction.category_name}</span>
                           <span className="text-sm text-muted-foreground">
                             {format(new Date(transaction.transaction_date), "MMM dd, yyyy")}
@@ -360,9 +361,8 @@ const ReportsModal = ({ transactions, isOpen, onOpenChange }: ReportsModalProps)
                         )}
                       </div>
                       <div className="text-right">
-                        <span className={`font-bold ${
-                          transaction.type === "income" ? "text-success" : "text-destructive"
-                        }`}>
+                        <span className={`font-bold ${transaction.type === "income" ? "text-success" : "text-destructive"
+                          }`}>
                           {transaction.type === "income" ? "+" : "-"}₹{transaction.amount.toFixed(2)}
                         </span>
                       </div>

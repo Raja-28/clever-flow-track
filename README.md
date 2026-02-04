@@ -1,73 +1,77 @@
-# Welcome to your Lovable project
+# Smart Expense Manager
 
-## Project info
+A modern, AI-powered personal finance tracking application built with React, TypeScript, and Supabase.
 
-**URL**: https://lovable.dev/projects/ffdcbbe6-e464-4ec6-baee-08afb3adbf47
+## Features
 
-## How can I edit this code?
+- 📊 **Dashboard** - Real-time spending analytics and visual charts
+- 💰 **Transaction Tracking** - Log income and expenses with categories
+- 🤖 **AI Insights** - Get personalized financial recommendations
+- 🎯 **Smart Goals** - Set and track savings goals
+- 🏆 **Gamification** - Earn badges and level up your financial habits
+- 📈 **Trend Analysis** - Visualize spending patterns over time
+- 🎨 **Dark/Light Mode** - Beautiful UI with theme support
 
-There are several ways of editing your application.
+## Tech Stack
 
-**Use Lovable**
+- **Frontend**: React 18, TypeScript, Vite
+- **Styling**: Tailwind CSS, shadcn/ui
+- **Backend**: Supabase (Auth, Database, Edge Functions)
+- **Charts**: Recharts
+- **Animations**: Framer Motion
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ffdcbbe6-e464-4ec6-baee-08afb3adbf47) and start prompting.
+## Getting Started
 
-Changes made via Lovable will be committed automatically to this repo.
+### Prerequisites
 
-**Use your preferred IDE**
+- Node.js 18+ 
+- npm or bun
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+### Installation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+```bash
+# Clone the repository
+git clone <your-repo-url>
 
-Follow these steps:
+# Navigate to project directory
+cd clever-flow-track
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Install dependencies
+npm install
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Environment Variables
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Create a `.env` file with your Supabase credentials:
 
-**Use GitHub Codespaces**
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_anon_key
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
+### Build for Production
 
-This project is built with:
+```bash
+npm run build
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+### Deploy to Netlify
 
-## How can I deploy this project?
+1. Go to [app.netlify.com/drop](https://app.netlify.com/drop)
+2. Drag and drop the `dist` folder
+3. Your site is live!
 
-Simply open [Lovable](https://lovable.dev/projects/ffdcbbe6-e464-4ec6-baee-08afb3adbf47) and click on Share -> Publish.
+### Deploy to Vercel
 
-## Can I connect a custom domain to my Lovable project?
+```bash
+npx vercel --prod
+```
 
-Yes, you can!
+## License
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+MIT License
